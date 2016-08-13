@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Snap</title>
+        <style media="screen">
+			body {
+				background: #fff;
+			}
+        </style>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+        <script type="text/javascript "src="js/snap.svg.js"></script>
+        <script type="text/javascript" src="js/script.js"></script>		
+    </head>
+    <body onload="start();">
+		<div id="divmenu"></div>
+		<svg id="game"></svg>
+		<script>
+			document.addEventListener( "click", function(e) {
+				var x = getPosition(e).x;
+				var y = getPosition(e).y;
+				console.log("x pos: "+ x +" // y pos:"+ y);
+			});	
+		</script>
+    </body>
+</html>
