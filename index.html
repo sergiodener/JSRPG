@@ -10,17 +10,150 @@
         </style>
 		<link rel="stylesheet" type="text/css" href="css/style.css">
         <script type="text/javascript "src="js/snap.svg.js"></script>
-        <script type="text/javascript" src="js/script.js"></script>		
+        <script type="text/javascript" src="js/script.js"></script>
+		<script type="text/javascript" src="js/indexDB.js"></script>
     </head>
     <body onload="start();">
 		<div id="divmenu"></div>
-		<svg id="game"></svg>
+		<div id="divgame">
+			<svg id="game"></svg>
+		</div>
+		<div id="footer">
+			<label for="tx">Translate x</label>
+		<input id="tx" type="text" name="Tx"> 
+		<label for="ty">Translate y</label>
+		<input id="ty" type="text" name="Ty"> 
+		<label for="rt">Rotate</label>
+		<input id="rt" type="text" name="Rt">
+		<label for="rtx">Rotate Pivot x</label>
+		<input id="rtx" type="text" name="Rtx">
+		<label for="rty">Rotate</label>
+		<input id="rty" type="text" name="Rty">
+		<input id="Calc" type="submit" value="Calculate">
+		</div>
 		<script>
 			document.addEventListener( "click", function(e) {
-				var x = getPosition(e).x;
-				var y = getPosition(e).y;
-				console.log("x pos: "+ x +" // y pos:"+ y);
+				var posX = getPosition(e).x;
+				var posY = getPosition(e).y;
+				console.log("x pos: "+ posX +" // y pos:"+ posY);
 			});	
+
+			
+			var x=35,
+				dx=0,
+				y=0,
+				my=0,
+				f=1,
+				fy=0,
+				h=0;
+				
+			function animate(){
+				
+				document.getElementById("sp").setAttribute("y",my);
+				document.getElementById("sp").setAttribute("x",x);
+				
+				document.getElementById("char").setAttribute("transform","matrix(1,0,0,1,"+(-x+dx)+","+y+")")
+				y+=(fy<2)?(7*f):0;x+=35;
+				dx+=(fy>1)?5*f:0;
+				if (x>210){x=35}
+				
+			}
+			
+			function onetest(event){
+				//keys[event.which]=true;
+				console.log(event.which);
+				switch (event.which){
+				case 40:
+				case 83:{//S
+					console.log("S");
+					if (my!=0){
+					my=0;
+					y+=75*fy;
+					f=1;
+					fy=0;
+					x=0;
+					}
+
+				}break;
+				case 38:
+				case 87:{//W	
+						console.log("W");
+						if(my!=75){
+							f=(-1);
+							y+=(fy<1)?-75:(fy-1)*75;
+							my=75;
+							fy=1;
+							x=0;
+						}
+					
+					}break;
+					case 39:
+					case 68:{//D
+							console.log("D");
+							if(my!=150){
+							f=1;
+							y+=(fy<2)?(fy-2)*75:75;
+							fy=2;
+							my=150;
+							x=0;
+						}
+							
+						}break;
+						case 37:
+						case 65:{//A
+								console.log("A");
+								if(my!=225){
+							f=-1;
+							y+=(3-fy)*-75;
+							fy=3;
+							my=225;
+							x=0;
+						}
+							}
+							break;
+				}
+				myVar = setInterval(animate, 130);
+								
+				//Object.keys(keys).length
+				//w : 87 / 38 | a : 65 / 37 | s : 83 / 40 | d : 68 / 39
+				document.removeEventListener('keydown', onetest, false);
+
+				
+			}
+			
+			
+			function test(e){
+			//delete keys[event.which]
+			document.getElementById("sp").setAttribute("x",0);
+			document.getElementById("char").setAttribute("transform","matrix(1,0,0,1,"+(dx)+","+y+")")
+			clearInterval(myVar);
+			
+			x=35;
+
+			console.log(myVar);	
+				document.addEventListener('keydown', onetest, false);
+			}
+			
+			document.addEventListener('keyup', test, false) ;
+
+			
+			
+			document.getElementById("Calc").onclick = function (tx,ty,a,ax,ay,a){
+			var tx = (parseInt(document.getElementById("tx").value)|0),
+				ty = (parseInt(document.getElementById("ty").value)|0),
+				a  = (parseInt(document.getElementById("rt").value)|0),
+				ax = (parseInt(document.getElementById("rtx").value)|0),
+				ay = (parseInt(document.getElementById("rty").value)|0);
+				a  = a *(Math.PI/180);
+				
+				console.log("matrix("+Math.cos(a)+","+(Math.sin(a))+","+(-Math.sin(a))+","+Math.cos(a)+","+(-ax*Math.cos(a)+ay*Math.sin(a)+ax+tx)+","+(-ax*Math.sin(a)-ay*Math.cos(a)+ay+ty)+")");
+				document.getElementById("setas").setAttribute("transform","matrix("+Math.cos(a)+","+Math.sin(a)+","+(-Math.sin(a))+","+Math.cos(a)+","+(-ax*Math.cos(a)+ay*Math.sin(a)+ax+tx)+","+(-ax*Math.sin(a)-ay*Math.cos(a)+ay+ty)+")"); 
+				//																 (cos(a)			, 	sin(a)		  , 	-sin(a)			 , 		cos(a) 		 , 		-cx × cos(a) + cy × sin(a) + cx + tx				, 		-cx × sin(a) - cy × cos(a) + cy + ty)
+
+			}
+			
+			document.getElementById("divgame").addEventListener("mousewheel", myFunction);
+			document.getElementById("divgame").addEventListener("DOMMouseScroll", myFunction);
 		</script>
     </body>
 </html>
